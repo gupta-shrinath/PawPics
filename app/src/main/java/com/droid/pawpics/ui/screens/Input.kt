@@ -11,8 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,57 +31,72 @@ import kotlinx.coroutines.withContext
 @Composable
 fun Input(fetchImages: (count: Int) -> Flow<Async<DogImages>>, goToScreen: (Any) -> Unit) {
     val coroutine = rememberCoroutineScope()
-    var count by remember {
-        mutableStateOf("")
+    var state by rememberSaveable(stateSaver = inputStateSaver()) {
+        mutableStateOf(InputState())
     }
-    var isValidInput by remember {
-        mutableStateOf(true)
-    }
-    var isImageLoading by remember {
-        mutableStateOf(false)
-    }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.align(Alignment.Center)) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             OutlinedTextField(
-                value = count,
-                onValueChange = { count = it },
+                value = state.count,
+                onValueChange = { state = state.copy(count = it) },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                isError = isValidInput.not(),
+                isError = state.isCountValid.not(),
                 supportingText = {
-                    if (isValidInput.not()) {
+                    if (state.isCountValid.not()) {
                         Text(text = "Invalid count")
                     }
                 }
             )
+            state.errorMessage?.takeIf { it.isNotBlank() }?.also {
+                Text(text = it)
+            }
             Button(
                 onClick = {
-                    if (count.isDigitsOnly()
-                            .not() || count.toInt() > DogCEO.MAX_IMAGE_COUNT || count.toInt() < 0
-                    ) {
-                        isValidInput = false
+                    try {
+                        if (state.count.isDigitsOnly()
+                                .not() || state.count.toInt() > DogCEO.MAX_IMAGE_COUNT || state.count.toInt() <= 0
+                        ) {
+                            state = state.copy(isCountValid = false)
+                            return@Button
+                        } else {
+                            state = state.copy(isCountValid = true)
+                        }
+                    } catch (e: NumberFormatException) {
+                        state = state.copy(isCountValid = false)
                         return@Button
                     }
-                    isValidInput = true
                     coroutine.launch(Dispatchers.IO) {
-                        fetchImages(count.toInt()).collect {
+                        fetchImages(state.count.toInt()).collect {
                             when (it) {
                                 is Async.Loading -> {
-                                    isImageLoading = true
+                                    state = state.copy(
+                                        isImageLoading = true,
+                                        errorMessage = null
+                                    )
                                 }
 
                                 is Async.Success -> {
-                                    isImageLoading = false
+                                    state = state.copy(
+                                        isImageLoading = true,
+                                        errorMessage = null
+                                    )
                                     withContext(Dispatchers.Main) {
                                         goToScreen(Screens.List(images = (it.data.toList())))
                                     }
                                 }
 
                                 is Async.Error -> {
-                                    isImageLoading = false
-
+                                    state = state.copy(
+                                        isImageLoading = true,
+                                        errorMessage = it.errorMessage
+                                    )
                                 }
                             }
 
@@ -90,7 +106,7 @@ fun Input(fetchImages: (count: Int) -> Flow<Async<DogImages>>, goToScreen: (Any)
 
                 },
             ) {
-                if (isImageLoading) {
+                if (state.isImageLoading) {
                     CircularProgressIndicator()
                 } else {
                     Text(text = "Fetch")
@@ -101,3 +117,30 @@ fun Input(fetchImages: (count: Int) -> Flow<Async<DogImages>>, goToScreen: (Any)
     }
 
 }
+
+
+data class InputState(
+    val count: String = "",
+    val isCountValid: Boolean = true,
+    val isImageLoading: Boolean = false,
+    val errorMessage: String? = null
+)
+
+private fun inputStateSaver() = Saver<InputState, Map<String, Any?>>(
+    save = { state ->
+        mapOf(
+            "count" to state.count,
+            "isCountValid" to state.isCountValid,
+            "isImageLoading" to state.isImageLoading,
+            "errorMessage" to state.errorMessage
+        )
+    },
+    restore = { restoredState ->
+        InputState(
+            count = restoredState["count"] as String,
+            isCountValid = restoredState["isCountValid"] as Boolean,
+            isImageLoading = restoredState["isImageLoading"] as Boolean,
+            errorMessage = restoredState["errorMessage"] as String?
+        )
+    }
+)

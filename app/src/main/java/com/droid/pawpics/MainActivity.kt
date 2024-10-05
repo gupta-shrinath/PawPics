@@ -15,7 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.droid.pawpics.ui.screens.Carousel
-import com.droid.pawpics.ui.screens.Input
 import com.droid.pawpics.ui.screens.Main
 import com.droid.pawpics.ui.screens.Screens
 import com.droid.pawpics.ui.theme.PawPicsTheme
@@ -23,9 +22,10 @@ import com.droid.pawpics.ui.viewmodel.PawPicsViewModel
 
 
 class MainActivity : ComponentActivity() {
+    private val viewmodel by viewModels<PawPicsViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewmodel by viewModels<PawPicsViewModel>()
         enableEdgeToEdge()
         setContent {
             PawPicsTheme {
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable<Screens.Input> {
-                                Input(viewmodel::getImages, navController::navigate)
+//                                Input(viewmodel::getImages, navController::navigate)
                             }
 
                             composable<Screens.List> {

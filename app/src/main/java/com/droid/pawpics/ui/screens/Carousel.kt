@@ -1,54 +1,88 @@
 package com.droid.pawpics.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.droid.dogceo.core.DogImages
-import com.droid.pawpics.ui.SampleDataInjector.dogImages
 import com.droid.pawpics.ui.components.DogImageView
 import com.droid.pawpics.ui.components.ShimmerEffect
 import com.droid.pawpics.ui.viewmodel.Async
 import kotlinx.coroutines.flow.Flow
 
+private fun AsyncSaver(): Saver<Async<*>, Any> = Saver(
+    save = { async ->
+        when (async) {
+            is Async.Loading -> "Loading"
+            is Async.Error -> async.errorMessage
+            is Async.Success<*> -> async.data
+        }
+    },
+    restore = { value ->
+        when (value) {
+            "Loading" -> Async.Loading
+            is String -> Async.Error(value)
+            else -> Async.Success(value as DogImages)
+        }
+    }
+)
+
 @Composable
 fun Carousel(
     flow: Flow<Async<DogImages>>,
 ) {
-    val state by flow.collectAsState(initial = Async.Loading)
+    Log.d("TAG", "Carousel View Composed!!")
+    var state by rememberSaveable(stateSaver = AsyncSaver()) { mutableStateOf(Async.Loading) }
+    LaunchedEffect(Unit) {
+        flow.collect {
+            Log.d("TAG", "Carousel: ${it}")
+            when (it) {
+                is Async.Loading -> {
+                    if ((state is Async.Loading).not()) {
+                        state = it
+                    }
+                }
+
+                is Async.Success -> {
+                    if ((state is Async.Success).not()) {
+                        state = it
+                    }
+                }
+
+                is Async.Error -> {
+                    if ((state is Async.Error).not()) {
+                        state = it
+                    }
+                }
+
+
+            }
+
+        }
+
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier =
@@ -85,7 +119,7 @@ fun Carousel(
 
                 is Async.Success -> {
                     val images = (state as Async.Success<DogImages>).data
-                    var image by remember {
+                    var image by rememberSaveable {
                         mutableStateOf(images.first())
                     }
                     Column(
@@ -134,12 +168,4 @@ fun Carousel(
 
         }
     }
-
-
-}
-
-@Preview
-@Composable
-fun CarouselViewPreview() {
-    Carousel(dogImages)
 }

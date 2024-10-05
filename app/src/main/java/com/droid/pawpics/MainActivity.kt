@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.droid.pawpics.ui.screens.Carousel
+import com.droid.pawpics.ui.screens.Input
 import com.droid.pawpics.ui.screens.Main
 import com.droid.pawpics.ui.screens.Screens
 import com.droid.pawpics.ui.theme.PawPicsTheme
@@ -46,6 +48,16 @@ class MainActivity : ComponentActivity() {
                                     flow = viewmodel.getImages(),
                                 )
                             }
+
+                            composable<Screens.Input> {
+                                Input(viewmodel::getImages, navController::navigate)
+                            }
+
+                            composable<Screens.List> {
+                                val args = it.toRoute<Screens.List>()
+                                com.droid.pawpics.ui.screens.List(args.images)
+                            }
+
                         }
                     }
                 }

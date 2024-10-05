@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -46,6 +47,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.http.logger)
     implementation(libs.retrofit.moshi)
-    implementation (libs.room.db)
+    implementation(libs.room.db)
     ksp(libs.room.db.compiler)
+    implementation(libs.kotlinx.serialization.json)
+
 }

@@ -1,8 +1,9 @@
 package com.droid.dogceo.core
 
-import android.util.Log
+import kotlinx.serialization.Serializable
 import java.util.LinkedList
 
+@Serializable
 class DogImages : LinkedList<String>() {
 
     private var currentIndex: Int = 0
@@ -40,7 +41,7 @@ class DogImages : LinkedList<String>() {
     }
 }
 
-fun List<String>.convertToDogImages():DogImages {
+fun List<String>.convertToDogImages(): DogImages {
     val dogImages = DogImages()
     dogImages.addAll(this)
     return dogImages

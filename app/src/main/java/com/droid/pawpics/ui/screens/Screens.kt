@@ -14,6 +14,6 @@ object Screens {
     object Input
 
     @Serializable
-    object List
+    data class List(@Serializable val images: kotlin.collections.List<String>)
 
 }

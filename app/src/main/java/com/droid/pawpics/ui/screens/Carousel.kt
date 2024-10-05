@@ -3,7 +3,6 @@ package com.droid.pawpics.ui.screens
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.droid.dogceo.core.DogImages
+import com.droid.pawpics.ui.components.AppBar
 import com.droid.pawpics.ui.components.DogImageView
 import com.droid.pawpics.ui.components.ShimmerEffect
 import com.droid.pawpics.ui.viewmodel.Async
@@ -49,9 +51,11 @@ private fun AsyncSaver(): Saver<Async<*>, Any> = Saver(
     }
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Carousel(
     flow: Flow<Async<DogImages>>,
+    onBackPress: () -> Unit
 ) {
     Log.d("TAG", "Carousel View Composed!!")
     var state by rememberSaveable(stateSaver = AsyncSaver()) { mutableStateOf(Async.Loading) }
@@ -83,13 +87,16 @@ fun Carousel(
         }
 
     }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Scaffold(
+        topBar = { AppBar(onBackPress = onBackPress) }
+    ) { innerPadding ->
         Column(
             modifier =
             Modifier
-                .align(Alignment.Center)
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(innerPadding)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             when (state) {
                 is Async.Loading -> {

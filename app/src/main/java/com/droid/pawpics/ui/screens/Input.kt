@@ -1,12 +1,15 @@
 package com.droid.pawpics.ui.screens
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,9 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.droid.dogceo.core.DogCEO
 import com.droid.dogceo.core.DogImages
+import com.droid.pawpics.ui.components.AppBar
 import com.droid.pawpics.ui.viewmodel.Async
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -29,18 +34,29 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun Input(fetchImages: (count: Int) -> Flow<Async<DogImages>>, goToScreen: (Any) -> Unit) {
+fun Input(
+    fetchImages: (count: Int) -> Flow<Async<DogImages>>,
+    goToScreen: (Any) -> Unit,
+    onBackPress: () -> Unit
+) {
     val coroutine = rememberCoroutineScope()
     var state by rememberSaveable(stateSaver = inputStateSaver()) {
         mutableStateOf(InputState())
     }
-
-    Box(modifier = Modifier.fillMaxSize()) {
+    Scaffold(topBar = { AppBar(onBackPress = onBackPress) }) { innerPadding ->
         Column(
-            modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                label = {
+                    Text(text = "Enter number of paw pics")
+                },
                 value = state.count,
                 onValueChange = { state = state.copy(count = it) },
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -52,12 +68,14 @@ fun Input(fetchImages: (count: Int) -> Flow<Async<DogImages>>, goToScreen: (Any)
                     if (state.isCountValid.not()) {
                         Text(text = "Invalid count")
                     }
-                }
-            )
+                },
+
+                )
             state.errorMessage?.takeIf { it.isNotBlank() }?.also {
                 Text(text = it)
             }
             Button(
+                modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     try {
                         if (state.count.isDigitsOnly()
@@ -88,6 +106,7 @@ fun Input(fetchImages: (count: Int) -> Flow<Async<DogImages>>, goToScreen: (Any)
                                         errorMessage = null
                                     )
                                     withContext(Dispatchers.Main) {
+                                        state = state.reset()
                                         goToScreen(Screens.List(images = (it.data.toList())))
                                     }
                                 }
@@ -125,6 +144,16 @@ data class InputState(
     val isImageLoading: Boolean = false,
     val errorMessage: String? = null
 )
+
+fun InputState.reset(): InputState {
+    return InputState(
+        count = "",
+        isCountValid = true,
+        isImageLoading = false,
+        errorMessage = null
+    )
+
+}
 
 private fun inputStateSaver() = Saver<InputState, Map<String, Any?>>(
     save = { state ->

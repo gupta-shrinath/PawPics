@@ -1,10 +1,19 @@
 package com.droid.dogceo.core
 
+import android.util.Log
 import java.util.LinkedList
 
 class DogImages : LinkedList<String>() {
 
-    private var currentIndex: Int = -1
+    private var currentIndex: Int = 0
+
+    fun hasNextImage(): Boolean {
+        return currentIndex < this.size - 1
+    }
+
+    fun hasPreviousImage(): Boolean {
+        return currentIndex > 0
+    }
 
     fun getNextImage(): String? {
         if (isEmpty()) {

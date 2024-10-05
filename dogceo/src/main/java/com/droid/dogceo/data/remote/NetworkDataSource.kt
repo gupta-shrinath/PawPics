@@ -28,7 +28,7 @@ class NetworkDataSource {
             val response =
                 service.getDogImages(APIConstants.BASE_URL + APIConstants.IMAGES_ENDPOINT + count)
             if (response.isSuccessful) {
-                response.body()
+                (response.body() as DogImages).copy(message =  (response.body() as DogImages).message.filter { it.isNotBlank() })
             } else {
                 null
             }

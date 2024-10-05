@@ -17,7 +17,7 @@ class LocalDataSource {
 
     suspend fun getDogImages(count:Int): List<DogImage>? {
         return try {
-            database.imageDao().getImages(count)
+            database.imageDao().getImages(count).filter { it.imageUrl.isNotBlank() }
         } catch (e: Exception) {
             Log.e(TAG, "insertDogImage: ", e)
             null

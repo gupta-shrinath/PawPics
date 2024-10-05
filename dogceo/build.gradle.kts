@@ -46,8 +46,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.http.logger)
     implementation(libs.retrofit.moshi)
-    implementation(libs.coil)
-    implementation(libs.navigation.compose)
     implementation (libs.room.db)
     ksp(libs.room.db.compiler)
 }

@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.droid.pawpics.ui.screens.CarouselView
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.droid.pawpics.ui.screens.Carousel
+import com.droid.pawpics.ui.screens.Main
+import com.droid.pawpics.ui.screens.Screens
 import com.droid.pawpics.ui.theme.PawPicsTheme
 import com.droid.pawpics.ui.viewmodel.PawPicsViewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,26 +28,28 @@ class MainActivity : ComponentActivity() {
         setContent {
             PawPicsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainView(modifier = Modifier.padding(innerPadding), viewmodel = viewmodel)
+                    Box(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                    ) {
+                        val navController = rememberNavController()
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screens.Main
+                        ) {
+                            composable<Screens.Main> {
+                                Main(navController::navigate)
+                            }
+
+                            composable<Screens.Carousel> {
+                                Carousel(
+                                    flow = viewmodel.getImages(),
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun MainView(modifier: Modifier, viewmodel: PawPicsViewModel) {
-    Box(modifier = modifier) {
-        CarouselView(
-            flow = viewmodel.getImages(),
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PawPicsPreview() {
-    PawPicsTheme {
-        MainView(modifier = Modifier, viewmodel = PawPicsViewModel())
     }
 }

@@ -44,13 +44,14 @@ import com.droid.pawpics.ui.viewmodel.Async
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun CarouselView(
+fun Carousel(
     flow: Flow<Async<DogImages>>,
 ) {
     val state by flow.collectAsState(initial = Async.Loading)
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier
+            modifier =
+            Modifier
                 .align(Alignment.Center)
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -181,5 +182,5 @@ fun CarouselView(
 @Preview
 @Composable
 fun CarouselViewPreview() {
-    CarouselView(dogImages)
+    Carousel(dogImages)
 }

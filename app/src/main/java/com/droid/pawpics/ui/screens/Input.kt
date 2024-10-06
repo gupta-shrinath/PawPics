@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -74,7 +75,7 @@ fun Input(
 
                 )
             state.errorMessage?.takeIf { it.isNotBlank() }?.also {
-                Text(text = it)
+                Text(text = it, style = MaterialTheme.typography.bodySmall.copy(color = Color.Red))
             }
             Button(
                 modifier = Modifier.fillMaxWidth(),
@@ -118,7 +119,8 @@ fun Input(
 
                                 is Async.Error -> {
                                     state = state.copy(
-                                        isImageLoading = true,
+                                        count = "",
+                                        isImageLoading = false,
                                         errorMessage = it.errorMessage
                                     )
                                 }

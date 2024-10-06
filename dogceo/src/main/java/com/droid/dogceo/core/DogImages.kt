@@ -1,18 +1,20 @@
 package com.droid.dogceo.core
 
+import android.util.Log
 import kotlinx.serialization.Serializable
 import java.util.LinkedList
 
 @Serializable
-class DogImages : LinkedList<String>() {
+class DogImages(private val index: Int = 0) : LinkedList<String>() {
 
-    private var currentIndex: Int = 0
+    var currentIndex: Int = index
 
     fun hasNextImage(): Boolean {
         return currentIndex < this.size - 1
     }
 
     fun hasPreviousImage(): Boolean {
+        Log.d("TAG", "hasPreviousImage: $currentIndex")
         return currentIndex > 0
     }
 

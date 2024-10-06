@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -34,49 +35,67 @@ import com.droid.pawpics.ui.components.ShimmerEffect
 import com.droid.pawpics.ui.viewmodel.Async
 import kotlinx.coroutines.flow.Flow
 
-private fun AsyncSaver(): Saver<Async<*>, Any> = Saver(
-    save = { async ->
-        when (async) {
-            is Async.Loading -> "Loading"
-            is Async.Error -> async.errorMessage
-            is Async.Success<*> -> async.data
-        }
-    },
-    restore = { value ->
-        when (value) {
-            "Loading" -> Async.Loading
-            is String -> Async.Error(value)
-            else -> Async.Success(value as DogImages)
+private fun AsyncSaver(): Saver<Async<DogImages>, Any> = Saver(save = { async ->
+    when (async) {
+        is Async.Loading -> "Loading"
+        is Async.Error -> async.errorMessage
+        is Async.Success<DogImages> -> {
+            Log.d(
+                "TAG", "AsyncSaver: Saving it ${
+                    mapOf(
+                        "currentIndex" to async.data.currentIndex, "images" to async.data.toList()
+                    )
+                }"
+            )
+            mapOf(
+                "currentIndex" to async.data.currentIndex, "images" to async.data.toList()
+            )
         }
     }
-)
+}, restore = { value ->
+    when (value) {
+        "Loading" -> Async.Loading
+        is String -> Async.Error(value)
+        else -> {
+            Log.d("TAG", "AsyncSaver: $value")
+            val map = (value as Map<String, *>)
+            val currentIndex = map["currentIndex"] as Int
+            val dogImage = DogImages(currentIndex)
+            Log.d("TAG", "AsyncSaver: Restoring ${map["images"] as List<String>}")
+            dogImage.addAll(map["images"] as List<String>)
+            Log.d("TAG", "AsyncSaver: Restored ${dogImage.currentIndex} ${dogImage.size}")
+            Async.Success(dogImage)
+
+        }
+    }
+})
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Carousel(
-    flow: Flow<Async<DogImages>>,
-    onBackPress: () -> Unit
+    flow: Flow<Async<DogImages>>, onBackPress: () -> Unit
 ) {
     Log.d("TAG", "Carousel View Composed!!")
     var state by rememberSaveable(stateSaver = AsyncSaver()) { mutableStateOf(Async.Loading) }
     LaunchedEffect(Unit) {
         flow.collect {
-            Log.d("TAG", "Carousel: ${it}")
+            Log.d("TAG", "Flow collected ${it}")
             when (it) {
                 is Async.Loading -> {
-                    if ((state is Async.Loading).not()) {
+                    if ((state is Async.Success).not()) {
                         state = it
                     }
                 }
 
                 is Async.Success -> {
                     if ((state is Async.Success).not()) {
+                        Log.d("TAG", "Success data updated $state")
                         state = it
                     }
                 }
 
                 is Async.Error -> {
-                    if ((state is Async.Error).not()) {
+                    if ((state is Async.Success).not()) {
                         state = it
                     }
                 }
@@ -87,12 +106,9 @@ fun Carousel(
         }
 
     }
-    Scaffold(
-        topBar = { AppBar(onBackPress = onBackPress) }
-    ) { innerPadding ->
+    Scaffold(topBar = { AppBar(onBackPress = onBackPress) }) { innerPadding ->
         Column(
-            modifier =
-            Modifier
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -112,8 +128,7 @@ fun Carousel(
                                         .height(30.dp)
                                         .width(50.dp)
                                         .background(
-                                            color = Color.LightGray,
-                                            shape = RoundedCornerShape(50)
+                                            color = Color.LightGray, shape = RoundedCornerShape(50)
                                         )
 
                                 )
@@ -126,8 +141,9 @@ fun Carousel(
 
                 is Async.Success -> {
                     val images = (state as Async.Success<DogImages>).data
-                    var image by rememberSaveable {
-                        mutableStateOf(images.first())
+                    Log.d("TAG", "Carousel: ${images.hasPreviousImage()}")
+                    var image by remember {
+                        mutableStateOf(images.toList()[images.currentIndex])
                     }
                     Column(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -166,8 +182,7 @@ fun Carousel(
                 is Async.Error -> {
                     val error = (state as Async.Error).errorMessage
                     Text(
-                        text = error,
-                        style = MaterialTheme.typography.displaySmall
+                        text = error, style = MaterialTheme.typography.displaySmall
                     )
 
                 }

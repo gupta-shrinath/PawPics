@@ -39,7 +39,7 @@ class DogCEORepositoryImpl(
                 }
                 return images?.message
             }
-            return localImages.map { it.imageUrl }
+            return localImages.map { it.imageUrl }.shuffled()
         } catch (e: Exception) {
             Log.e(TAG, "getDogImage", e)
             return null

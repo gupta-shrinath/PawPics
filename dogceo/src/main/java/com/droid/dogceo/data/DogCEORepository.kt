@@ -1,10 +1,10 @@
 package com.droid.dogceo.data
 
-interface DogCEORepository {
+internal interface DogCEORepository {
 
     suspend fun getDogImage(): String?
 
-    suspend fun getDogImages(count:Int): List<String>?
+    suspend fun getDogImages(count: Int): List<String>?
 
     suspend fun fetchDogImages()
 

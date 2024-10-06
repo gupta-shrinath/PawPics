@@ -1,13 +1,13 @@
 package com.droid.dogceo.data
 
 import android.util.Log
-import com.droid.dogceo.core.DogCEO
+import com.droid.dogceo.core.DogCEOAPI
 import com.droid.dogceo.data.local.LocalDataSource
 import com.droid.dogceo.data.remote.NetworkDataSource
 
 private const val TAG = "DogCEORepositoryImpl"
 
-class DogCEORepositoryImpl(
+internal class DogCEORepositoryImpl(
     private val networkDataSource: NetworkDataSource,
     private val localDataSource: LocalDataSource
 ) : DogCEORepository {
@@ -49,8 +49,8 @@ class DogCEORepositoryImpl(
     override suspend fun fetchDogImages() {
         try {
             val imagesCount = localDataSource.getDogImageCount()
-            if (imagesCount < DogCEO.MAX_IMAGE_COUNT) {
-                val images = networkDataSource.getDogImages(DogCEO.MAX_IMAGE_COUNT - imagesCount)
+            if (imagesCount < DogCEOAPI.MAX_IMAGE_COUNT) {
+                val images = networkDataSource.getDogImages(DogCEOAPI.MAX_IMAGE_COUNT - imagesCount)
                 images?.let { dogImages ->
                     dogImages.message.forEach {
                         localDataSource.insertDogImage(it)

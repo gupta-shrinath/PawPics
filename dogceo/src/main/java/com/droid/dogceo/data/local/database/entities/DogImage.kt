@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "images")
-data class DogImage(
+internal data class DogImage(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     @ColumnInfo(name = "image_url")

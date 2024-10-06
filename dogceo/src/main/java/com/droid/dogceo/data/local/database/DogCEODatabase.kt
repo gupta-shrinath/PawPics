@@ -6,7 +6,7 @@ import com.droid.dogceo.data.local.database.daos.DogImageDao
 import com.droid.dogceo.data.local.database.entities.DogImage
 
 @Database(entities = [DogImage::class], version = 1)
-abstract class DogCEODatabase : RoomDatabase() {
+internal abstract class DogCEODatabase : RoomDatabase() {
     abstract fun imageDao(): DogImageDao
 
     companion object {

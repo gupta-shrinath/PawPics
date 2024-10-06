@@ -5,7 +5,7 @@ import com.droid.dogceo.data.models.DogImage
 import com.droid.dogceo.data.models.DogImages
 
 
-class NetworkDataSource(private val service: ApiService) {
+internal class NetworkDataSource(private val service: ApiService) {
 
     suspend fun getDogImage(): DogImage? {
         return try {

@@ -6,7 +6,7 @@ import com.droid.dogceo.data.local.database.entities.DogImage
 
 private const val TAG = "LocalDataSource"
 
-class LocalDataSource(private val database: DogCEODatabase) {
+internal class LocalDataSource(private val database: DogCEODatabase) {
 
     suspend fun getDogImages(count: Int): List<DogImage>? {
         return try {

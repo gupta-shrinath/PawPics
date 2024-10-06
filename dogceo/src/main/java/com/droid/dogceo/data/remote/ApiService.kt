@@ -6,11 +6,11 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Url
 
-interface ApiService {
+internal interface ApiService {
 
     @GET(APIConstants.IMAGES_ENDPOINT)
     suspend fun getDogImage(): Response<DogImage>
 
     @GET
-    suspend fun getDogImages(@Url url:String):Response<DogImages>
+    suspend fun getDogImages(@Url url: String): Response<DogImages>
 }

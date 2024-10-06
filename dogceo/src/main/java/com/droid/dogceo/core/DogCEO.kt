@@ -1,17 +1,14 @@
 package com.droid.dogceo.core
 
 import android.app.Application
+import com.droid.dogceo.core.DogCEOAPI.MAX_IMAGE_COUNT
 import com.droid.dogceo.data.DogCEORepository
 import com.droid.dogceo.exceptions.InvalidCountException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DogCEO(private val repository: DogCEORepository) {
-
-    companion object {
-        const val MAX_IMAGE_COUNT = 10
-    }
+internal class DogCEO(private val repository: DogCEORepository) {
 
     private lateinit var application: Application
 

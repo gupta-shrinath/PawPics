@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.droid.dogceo.data.local.database.entities.DogImage
 
 @Dao
-interface DogImageDao {
+internal interface DogImageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertImage(image: DogImage)

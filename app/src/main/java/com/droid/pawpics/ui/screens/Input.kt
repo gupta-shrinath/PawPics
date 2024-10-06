@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
-import com.droid.dogceo.core.DogCEO
+import com.droid.dogceo.core.DogCEOAPI
 import com.droid.dogceo.core.DogImages
 import com.droid.pawpics.ui.components.AppBar
 import com.droid.pawpics.ui.viewmodel.Async
@@ -84,7 +84,7 @@ fun Input(
                     }
                     try {
                         if (state.count.isDigitsOnly()
-                                .not() || state.count.toInt() > DogCEO.MAX_IMAGE_COUNT || state.count.toInt() <= 0
+                                .not() || state.count.toInt() > DogCEOAPI.MAX_IMAGE_COUNT || state.count.toInt() <= 0
                         ) {
                             state = state.copy(isCountValid = false)
                             return@Button

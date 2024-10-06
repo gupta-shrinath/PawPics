@@ -12,6 +12,8 @@ object DogCEOAPI {
 
     private lateinit var dogCEO: DogCEO
 
+    const val MAX_IMAGE_COUNT = 10
+
     fun init(application: Application) {
         dogCEO = DogCEO(
             DogCEORepositoryImpl(
@@ -33,7 +35,7 @@ object DogCEOAPI {
         return dogCEO.getImage()
     }
 
-    suspend fun getImages(number: Int = DogCEO.MAX_IMAGE_COUNT): DogImages? {
+    suspend fun getImages(number: Int = MAX_IMAGE_COUNT): DogImages? {
         if (!::dogCEO.isInitialized) {
             throw IllegalStateException("DogCEO is not initialized. Call DogCEO.init(application) in your Application class.")
         }

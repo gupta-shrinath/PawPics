@@ -2,15 +2,13 @@ package com.droid.pawpics.ui.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.droid.dogceo.core.DogCEO
 import com.droid.dogceo.core.DogCEOAPI
 import com.droid.dogceo.exceptions.InvalidCountException
 import kotlinx.coroutines.flow.flow
 
 class PawPicsViewModel : ViewModel() {
 
-
-    fun getImages(count: Int = DogCEO.MAX_IMAGE_COUNT) =
+    fun getImages(count: Int = DogCEOAPI.MAX_IMAGE_COUNT) =
         flow {
             emit(Async.Loading)
             Log.d("TAG", "getImages flow started")

@@ -51,3 +51,4 @@ Activity as a List or RecyclerView.
 - Network calls are implemented using Retrofit2
 - Json parsing using moshi.
 - Unit test cases are written using JUnit and Mockito
+- Exposes only required APIs to other modules

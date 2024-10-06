@@ -33,16 +33,19 @@ Activity as a List or RecyclerView.
 - Uses Typesafe compose navigation.
 - Follows MVVM architecture.
 - Uses Coil to display and cache images.
-- It uses DogCEO.getImages(int number) only because the usecases of the app are better fulfilled
+- It uses DogCEOAPI.getImages(int number) only because the usecases of the app are better fulfilled
   with it as the usecases requires list of dog images which the mentioned method returns.
+- Manages state across screen rotation.
 
 ## DogCEO
 
 - Written in Kotlin.
-- Provides DogCEO object to use above mentioned helper methods.
+- Requires app module to call DogCEOAPI.init() in Application class.
+- DogCEOAPI.init() fetches MAX_IMAGE_COUNT images stores in database
+- Provides DogCEOAPI object to use above mentioned helper methods.
 - DogCEO.getImages(int number) returns a DogImages object which provides the getNextImage() and
   getPreviousImage() and other methods.
-- Requires app module to call DogCEO.init() in Application class.
 - Stores dog image urls in Room database
 - Network calls are implemented using Retrofit2
 - Json parsing using moshi.
+- Unit test cases are written using JUnit and Mockito

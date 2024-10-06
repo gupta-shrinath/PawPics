@@ -25,6 +25,8 @@ Activity as a List or RecyclerView.
 - DogCEO - Android library to fetch Dog images.
 - PawPics - Android app that uses the above library to demonstrate the helper
   methods.
+- Click on [app](https://github.com/gupta-shrinath/PawPics/raw/refs/heads/main/apk/pawpics.apk) to
+  get the apk.
 
 ## PawPics
 

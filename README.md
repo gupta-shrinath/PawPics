@@ -35,8 +35,9 @@ Activity as a List or RecyclerView.
 - Uses Typesafe compose navigation.
 - Follows MVVM architecture.
 - Uses Coil to display and cache images.
-- It uses DogCEOAPI.getImages(int number) only because the usecases of the app are better fulfilled
-  with it as the usecases requires list of dog images which the mentioned method returns.
+- It uses DogCEOAPI.getImages(int number) primarily because the usecases of the app are better
+  fulfilled with it as the usecases requires list of dog images which the mentioned method returns.
+  It uses DogCEOAPI.getImage() in case of one image to be shown.
 - Manages state across screen rotation.
 
 ## DogCEO

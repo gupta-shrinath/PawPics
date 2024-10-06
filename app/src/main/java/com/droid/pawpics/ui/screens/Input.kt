@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -77,6 +79,9 @@ fun Input(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
+                    if (state.isImageLoading) {
+                        return@Button
+                    }
                     try {
                         if (state.count.isDigitsOnly()
                                 .not() || state.count.toInt() > DogCEO.MAX_IMAGE_COUNT || state.count.toInt() <= 0
@@ -126,7 +131,7 @@ fun Input(
                 },
             ) {
                 if (state.isImageLoading) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
                 } else {
                     Text(text = "Fetch")
                 }

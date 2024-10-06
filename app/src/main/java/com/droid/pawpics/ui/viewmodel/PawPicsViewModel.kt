@@ -11,6 +11,7 @@ class PawPicsViewModel : ViewModel() {
 
     fun getImages(count: Int = DogCEO.MAX_IMAGE_COUNT) =
         flow {
+            emit(Async.Loading)
             Log.d("TAG", "getImages flow started")
             try {
                 val images = DogCEO.getImages(count)

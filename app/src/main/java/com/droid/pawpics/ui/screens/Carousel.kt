@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -146,11 +147,15 @@ fun Carousel(
                         mutableStateOf(images.toList()[images.currentIndex])
                     }
                     Column(
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        DogImageView(imageUrl = image)
-                        Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                        DogImageView(modifier = Modifier, imageUrl = image)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
                             Button(
                                 enabled = image.isNotBlank() && images.hasPreviousImage(),
                                 onClick = {

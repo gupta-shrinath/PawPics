@@ -25,10 +25,13 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 
 @Composable
-fun DogImageView(imageUrl:String) {
+fun DogImageView(
+    modifier: Modifier = Modifier
+        .fillMaxHeight(0.4f), imageUrl: String
+) {
     val context = LocalContext.current
     Card(
-        modifier = Modifier.fillMaxHeight(0.4f),
+        modifier = modifier,
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(4.dp)

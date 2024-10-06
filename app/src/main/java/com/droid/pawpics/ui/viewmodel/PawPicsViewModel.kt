@@ -3,6 +3,7 @@ package com.droid.pawpics.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.droid.dogceo.core.DogCEO
+import com.droid.dogceo.core.DogCEOAPI
 import com.droid.dogceo.exceptions.InvalidCountException
 import kotlinx.coroutines.flow.flow
 
@@ -14,7 +15,7 @@ class PawPicsViewModel : ViewModel() {
             emit(Async.Loading)
             Log.d("TAG", "getImages flow started")
             try {
-                val images = DogCEO.getImages(count)
+                val images = DogCEOAPI.getImages(count)
                 if (images != null) {
                     emit(Async.Success(images))
                 } else {

@@ -1,21 +1,14 @@
 package com.droid.dogceo.data.local
 
 import android.util.Log
-import androidx.room.Room
-import com.droid.dogceo.core.DogCEO
 import com.droid.dogceo.data.local.database.DogCEODatabase
 import com.droid.dogceo.data.local.database.entities.DogImage
 
 private const val TAG = "LocalDataSource"
 
-class LocalDataSource {
+class LocalDataSource(private val database: DogCEODatabase) {
 
-    private val database = Room.databaseBuilder(
-        DogCEO.getApplication(),
-        DogCEODatabase::class.java, DogCEODatabase.DATABASE_NAME
-    ).build()
-
-    suspend fun getDogImages(count:Int): List<DogImage>? {
+    suspend fun getDogImages(count: Int): List<DogImage>? {
         return try {
             database.imageDao().getImages(count).filter { it.imageUrl.isNotBlank() }
         } catch (e: Exception) {
@@ -32,7 +25,7 @@ class LocalDataSource {
         }
     }
 
-    suspend fun getDogImageCount():Int {
+    suspend fun getDogImageCount(): Int {
         return try {
             database.imageDao().getImageCount()
         } catch (e: Exception) {

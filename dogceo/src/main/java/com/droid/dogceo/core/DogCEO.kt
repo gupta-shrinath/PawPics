@@ -2,19 +2,18 @@ package com.droid.dogceo.core
 
 import android.app.Application
 import com.droid.dogceo.data.DogCEORepository
-import com.droid.dogceo.data.DogCEORepositoryImpl
 import com.droid.dogceo.exceptions.InvalidCountException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-object DogCEO {
+class DogCEO(private val repository: DogCEORepository) {
+
+    companion object {
+        const val MAX_IMAGE_COUNT = 10
+    }
+
     private lateinit var application: Application
-
-    private val repository: DogCEORepository by lazy { DogCEORepositoryImpl() }
-
-    const val MAX_IMAGE_COUNT = 10
 
     fun init(application: Application) {
         this.application = application

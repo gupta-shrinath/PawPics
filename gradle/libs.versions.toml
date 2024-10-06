@@ -19,7 +19,10 @@ composeNavigation = "2.8.1"
 room-db = "2.6.1"
 ksp = "1.9.0-1.0.12"
 serialization = "1.6.3"
-
+mockito = "5.14.1"
+mockito-kotlin = "4.1.0"
+coroutines-test = "1.9.0"
+robolectric = "4.8.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +50,11 @@ navigation-compose = { module = "androidx.navigation:navigation-compose", versio
 room-db = { group = "androidx.room", name = "room-ktx", version.ref = "room-db" }
 room-db-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room-db" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

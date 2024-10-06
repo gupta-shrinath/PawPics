@@ -5,9 +5,7 @@ import com.droid.dogceo.data.models.DogImage
 import com.droid.dogceo.data.models.DogImages
 
 
-class NetworkDataSource {
-
-    private val service: ApiService = RetrofitClient.instance.create(ApiService::class.java)
+class NetworkDataSource(private val service: ApiService) {
 
     suspend fun getDogImage(): DogImage? {
         return try {
@@ -28,7 +26,7 @@ class NetworkDataSource {
             val response =
                 service.getDogImages(APIConstants.BASE_URL + APIConstants.IMAGES_ENDPOINT + count)
             if (response.isSuccessful) {
-                (response.body() as DogImages).copy(message =  (response.body() as DogImages).message.filter { it.isNotBlank() })
+                (response.body() as DogImages).copy(message = (response.body() as DogImages).message.filter { it.isNotBlank() })
             } else {
                 null
             }

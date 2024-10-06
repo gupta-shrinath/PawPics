@@ -39,6 +39,15 @@ internal class DogCEORepositoryImpl(
                 }
                 return images?.message
             }
+            if (localImages.size < count) {
+                val images = networkDataSource.getDogImages(count - localImages.size)
+                images?.let { dogImages ->
+                    dogImages.message.forEach {
+                        localDataSource.insertDogImage(it)
+                    }
+                    return localDataSource.getDogImages(count)?.map { it.imageUrl }?.shuffled()
+                }
+            }
             return localImages.map { it.imageUrl }.shuffled()
         } catch (e: Exception) {
             Log.e(TAG, "getDogImage", e)

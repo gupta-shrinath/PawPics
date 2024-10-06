@@ -38,6 +38,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun Input(
+    fetchImage: () -> Flow<Async<DogImages>>,
     fetchImages: (count: Int) -> Flow<Async<DogImages>>,
     goToScreen: (Any) -> Unit,
     onBackPress: () -> Unit
@@ -46,6 +47,37 @@ fun Input(
     var state by rememberSaveable(stateSaver = inputStateSaver()) {
         mutableStateOf(InputState())
     }
+
+    suspend fun collectImages(it: Async<DogImages>) {
+        when (it) {
+            is Async.Loading -> {
+                state = state.copy(
+                    isImageLoading = true,
+                    errorMessage = null
+                )
+            }
+
+            is Async.Success -> {
+                state = state.copy(
+                    isImageLoading = true,
+                    errorMessage = null
+                )
+                withContext(Dispatchers.Main) {
+                    state = state.reset()
+                    goToScreen(Screens.List(images = (it.data.toList())))
+                }
+            }
+
+            is Async.Error -> {
+                state = state.copy(
+                    count = "",
+                    isImageLoading = false,
+                    errorMessage = it.errorMessage
+                )
+            }
+        }
+    }
+
     Scaffold(topBar = { AppBar(onBackPress = onBackPress) }) { innerPadding ->
         Column(
             modifier = Modifier
@@ -97,36 +129,14 @@ fun Input(
                         return@Button
                     }
                     coroutine.launch(Dispatchers.IO) {
-                        fetchImages(state.count.toInt()).collect {
-                            when (it) {
-                                is Async.Loading -> {
-                                    state = state.copy(
-                                        isImageLoading = true,
-                                        errorMessage = null
-                                    )
-                                }
-
-                                is Async.Success -> {
-                                    state = state.copy(
-                                        isImageLoading = true,
-                                        errorMessage = null
-                                    )
-                                    withContext(Dispatchers.Main) {
-                                        state = state.reset()
-                                        goToScreen(Screens.List(images = (it.data.toList())))
-                                    }
-                                }
-
-                                is Async.Error -> {
-                                    state = state.copy(
-                                        count = "",
-                                        isImageLoading = false,
-                                        errorMessage = it.errorMessage
-                                    )
-                                }
+                        if (state.count.toInt() == 1) {
+                            fetchImage().collect {
+                                collectImages(it)
                             }
-
-
+                        } else {
+                            fetchImages(state.count.toInt()).collect {
+                                collectImages(it)
+                            }
                         }
                     }
 

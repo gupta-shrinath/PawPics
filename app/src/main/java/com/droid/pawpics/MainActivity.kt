@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
                     composable<Screens.Input> {
                         Input(
+                            viewmodel::getImage,
                             viewmodel::getImages,
                             navController::navigate,
                             navController::popBackStack
